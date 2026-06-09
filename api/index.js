@@ -1,11 +1,12 @@
 const express = require('express');
+const path = require('path');
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // Supaya server bisa membaca data dari form input HTML
 app.use(express.urlencoded({ extended: true }));
 
-// Setting EJS normal (karena index.js sudah di luar bersama folder views)
+// SOLUSI TERBAIK VERCEL: Mengunci path absolut dari root directory proyek
+app.set('views', path.join(process.cwd(), 'api', 'views'));
 app.set('view engine', 'ejs');
 
 // Data Menu Makanan
@@ -41,12 +42,13 @@ app.get('/success', (req, res) => {
   res.render('success');
 });
 
-// Jalankan server jika dijalankan secara lokal (di laptop sendiri)
+// Jalankan server jika dijalankan secara lokal
 if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
     console.log(`Aplikasi foodAwan berjalan di http://localhost:${PORT}`);
   });
 }
 
-// WAJIB UNTUK VERCEL: Mengekspor aplikasi Express
+// Ekspor untuk Vercel
 module.exports = app;
